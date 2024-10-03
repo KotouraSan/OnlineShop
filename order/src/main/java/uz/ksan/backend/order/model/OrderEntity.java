@@ -25,6 +25,8 @@ public class OrderEntity implements Serializable {
     String trackingNumber;
     double discount;
     double totalPrice;
+    String fullName;
+
     @PrePersist
     public void prePersist() {
         if (orderDate == null) {

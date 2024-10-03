@@ -6,10 +6,14 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import uz.ksan.backend.order.model.OrderEntity;
 import uz.ksan.backend.order.repository.OrderRepository;
 import uz.ksan.backend.order.service.OrderService;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,6 +29,7 @@ public class OrderController {
     OrderRepository orderRepository;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public String createOrder(@RequestBody OrderEntity order) {
         orderService.saveOrder(order);
         return "Order created";
@@ -34,5 +39,15 @@ public class OrderController {
     public String deleteOrder(@PathVariable String trackingNumber) {
         orderService.deleteOrderByTrackingNumber(trackingNumber);
         return "Order deleted";
+    }
+
+    @GetMapping
+    public ResponseEntity<List<OrderEntity>> findAllOrders() {
+        return ResponseEntity.ok(orderService.findAllOrders());
+    }
+
+    @GetMapping("customer/{fullName}")
+    public ResponseEntity<List<OrderEntity>> findAllOrders(@PathVariable String fullName) {
+        return ResponseEntity.ok(orderService.findAllOrdersByCustomer(fullName));
     }
 }

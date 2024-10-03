@@ -19,6 +19,7 @@ public class Order implements Serializable {
     double discount;
     double totalPrice;
     LocalDate orderDate;
+    String fullName;
 
 
 }

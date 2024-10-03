@@ -29,6 +29,5 @@ public class FullCustomerResponse implements Serializable {
     Long postalCode;
 
     List<Order> orders;
-    List<Shop> shops;
 
 }

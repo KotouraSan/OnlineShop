@@ -5,7 +5,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerMapping;
@@ -28,11 +28,12 @@ public class CustomerController {
 
     @Autowired
     CustomerRepository customerRepository;
-    @Qualifier("resourceHandlerMapping")
+
     @Autowired
     private HandlerMapping resourceHandlerMapping;
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     public String saveCustomer(@RequestBody CustomerEntity customer) {
         customerService.saveCustomer(customer);
         return "Customer saved";
@@ -51,12 +52,14 @@ public class CustomerController {
     }
 
     @GetMapping
-    public List<CustomerEntity> findAllCustomers() {
-        return customerRepository.findAll();
+    public ResponseEntity<List<CustomerEntity>> findAllCustomers() {
+        return ResponseEntity.ok(customerService.findAllCustomers());
     }
 
-    @GetMapping("find/{fullName}")
-    public ResponseEntity<FullCustomerResponse> findCustomer(@PathVariable String fullName) {
-        return ResponseEntity.ok(customerService.findClientWithOrders(fullName));
+    @GetMapping("{fullName}")
+    public ResponseEntity<FullCustomerResponse> findOrderByCustomer(@PathVariable String fullName) {
+        return ResponseEntity.ok(customerService.findOrderByCustomer(fullName));
     }
+
+
 }

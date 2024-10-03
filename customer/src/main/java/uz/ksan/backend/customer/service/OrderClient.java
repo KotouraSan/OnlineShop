@@ -9,6 +9,6 @@ import java.util.List;
 
 @FeignClient(name = "orders-service", url = "http://localhost:8222/api/v1/orders/")
 public interface OrderClient {
-    @GetMapping("{fullName}")
-    List<Order> findOrdersForClient(@PathVariable("fullName") String fullName);
+    @GetMapping("customer/{fullName}")
+    List<Order> findOrdersForCustomer(@PathVariable("fullName") String fullName);
 }

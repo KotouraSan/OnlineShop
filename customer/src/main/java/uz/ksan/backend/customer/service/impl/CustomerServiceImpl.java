@@ -3,12 +3,10 @@ package uz.ksan.backend.customer.service.impl;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import uz.ksan.backend.customer.model.CustomerEntity;
 import uz.ksan.backend.customer.model.FullCustomerResponse;
 import uz.ksan.backend.customer.repository.CustomerRepository;
-import uz.ksan.backend.customer.service.CustomerService;
 import uz.ksan.backend.customer.service.OrderClient;
 
 import java.util.List;
@@ -46,10 +44,12 @@ public class CustomerServiceImpl implements uz.ksan.backend.customer.service.Cus
     }
 
 
-    public FullCustomerResponse findClientWithOrders(String fullName){
+
+
+    public FullCustomerResponse findOrderByCustomer(String fullName){
         var foundClient = findByFullName(fullName)
                 .orElseThrow(() -> new NoSuchElementException("No customer found with Name: " + fullName));
-        var orders = orderClient.findOrdersForClient(fullName);
+        var orders = orderClient.findOrdersForCustomer(fullName);
         return FullCustomerResponse.builder()
                 .fullName(foundClient.getFullName())
                 .phoneNumber(foundClient.getPhoneNumber())
@@ -61,4 +61,8 @@ public class CustomerServiceImpl implements uz.ksan.backend.customer.service.Cus
                 .build();
     }
 
+    @Override
+    public List<CustomerEntity> findAllCustomers() {
+        return customerRepository.findAll();
+    }
 }

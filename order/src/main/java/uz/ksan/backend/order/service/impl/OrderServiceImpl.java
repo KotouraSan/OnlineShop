@@ -10,6 +10,7 @@ import uz.ksan.backend.order.repository.OrderRepository;
 import uz.ksan.backend.order.service.OrderService;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -37,5 +38,14 @@ public class OrderServiceImpl implements uz.ksan.backend.order.service.OrderServ
 
     public Optional<OrderEntity> findOrderByTrackingNumber(String trackingNumber){
         return (orderRepository.findOrderByTrackingNumber(trackingNumber));
+    }
+
+    public List<OrderEntity> findAllOrders() {
+        return orderRepository.findAll();
+    }
+
+    @Override
+    public List<OrderEntity> findAllOrdersByCustomer(String fullName) {
+        return orderRepository.findAllOrdersByFullName(fullName);
     }
 }
