@@ -1,0 +1,35 @@
+server:
+  port: 8222
+
+eureka:
+  client:
+    register-with-eureka: false
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      mvc:
+        routes:
+          - id: customer-service
+            uri: http://localhost:8090
+            predicates:
+              - Path=/api/v1/customer/**
+
+          - id: orders-service
+            uri: http://localhost:8100
+            predicates:
+              - Path=/api/v1/orders/**
+
+          - id: shop-service
+            uri: http://localhost:8110
+            predicates:
+              - Path=/api/v1/shop/**
+  config:
+    import: optional:configserver:http://localhost:8888
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

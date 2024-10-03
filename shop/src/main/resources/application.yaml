@@ -1,0 +1,33 @@
+server:
+  port: 8110
+
+
+
+
+
+spring:
+  application:
+    #display name in Eureka
+    name: shop
+  config:
+    import: optional:configserver:http://localhost:8888
+
+  #postgresql connecting
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/shop
+    username: postgres
+    password: bestuser
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+
+
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0
