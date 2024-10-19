@@ -5,7 +5,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import uz.ksan.backend.auth.security.model.Role;
 import uz.ksan.backend.auth.security.repository.RoleRepository;
-import uz.ksan.backend.auth.security.repository.UserRepository;
 
 @Component
 public class DataInitializer implements CommandLineRunner {

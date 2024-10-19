@@ -31,10 +31,11 @@ spring:
       hibernate:
         format_sql: true
 jwt:
-  secret: 5adf394fd42a483b220d040065965d0158b655271dda121832e638d61591c88c
+  secret: 6764d74c2a0bf88cdd4ebc475dd4fef9ee97dff1a5ed599492d171ba4840c0fda312179c2af333fb73530b81638219b405dda875d6955f29d6d1fd463b450196
 
 
 management:
   tracing:
     sampling:
       probability: 1.0
+

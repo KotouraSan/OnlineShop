@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,12 +19,10 @@ import uz.ksan.backend.auth.security.DTO.UserDTO;
 import uz.ksan.backend.auth.security.jwt.JwtUtils;
 import uz.ksan.backend.auth.security.mapper.UserMapper;
 import uz.ksan.backend.auth.security.model.User;
-import uz.ksan.backend.auth.security.repository.RoleRepository;
 import uz.ksan.backend.auth.security.repository.UserRepository;
 import uz.ksan.backend.auth.security.service.service.UserDetailsImpl;
 import uz.ksan.backend.auth.security.service.service.UserService;
 
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -43,34 +40,41 @@ public class AuthController {
 
     private final UserRepository userRepository;
 
+
     @PostMapping("/signin")
     @Operation(summary = "Аутентификация пользователя", description = "Вход пользователя в систему")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()));
 
+            SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtUtils.generateJwtToken(authentication);
 
-        String jwt = jwtUtils.generateJwtToken(authentication);
+            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+            User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
 
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+            UserDTO userDTO = userMapper.toUserDTO(user);
 
-        UserDTO userDTO = userMapper.toUserDTO(userRepository.findByUsername(userDetails.getUsername()).orElseThrow());
+            JwtResponse jwtResponse = new JwtResponse(
+                    jwt,
+                    userDTO.getId(),
+                    userDTO.getUsername(),
+                    userDTO.getEmail()
+            );
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDTO.getId(),
-                userDTO.getUsername(),
-                userDTO.getEmail(),
-                roles));
+            return ResponseEntity.ok(jwtResponse);
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Authentication failed");
+        }
     }
+
+
 
     @PostMapping("/signup")
     @Operation(summary = "Регистрация пользователя", description = "создание нового пользователя")
